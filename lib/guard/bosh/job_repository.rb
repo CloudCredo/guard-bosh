@@ -1,4 +1,5 @@
 require 'pathname'
+require 'yaml'
 
 module Guard
   class Bosh

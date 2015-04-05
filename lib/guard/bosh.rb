@@ -1,4 +1,6 @@
 require 'guard/compat/plugin'
+require 'pathname'
+require 'yaml'
 
 module Guard
   # Guard BOSH Plugin

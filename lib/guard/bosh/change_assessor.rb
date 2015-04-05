@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Guard
   class Bosh
     # Determines the impact of a code change to enable a subset of files to be

@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Guard
   class Bosh
     # Packages for a given BOSH job
