@@ -31,10 +31,18 @@ describe Guard::Bosh::Notifier do
       ])
     end
     it 'outputs the template the error occurred in and the detail' do
-      expect(Guard::Compat::UI).to receive(:error).with('config.erb: Missing property: redis.port')
+      expect(Guard::Compat::UI).to receive(:error).with('config.erb:10: missing property: redis.port')
       subject.notify([
-        { template: 'config.erb', status: :failure, detail: 'Missing property: redis.port' }
+        { template: 'config.erb', status: :failure, detail: 'missing property: redis.port', line: 10 }
       ])
+    end
+    context 'when the line number is not known' do
+      it 'outputs the template the error occurred in and the detail' do
+        expect(Guard::Compat::UI).to receive(:error).with('config.erb:?: missing property: redis.port')
+        subject.notify([
+          { template: 'config.erb', status: :failure, detail: 'missing property: redis.port', line: :unknown }
+        ])
+      end
     end
   end
 end
