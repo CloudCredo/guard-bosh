@@ -27,30 +27,31 @@ describe Guard::Bosh::EffectivePropertiesCalculator do
   it 'merges the properties' do
     expect(job_defaults_loader).to receive(:load_properties).and_return(
 
-        'redis' => {
-          'password' => 'password',
-          'port' => 6379
-        }
+      'redis' => {
+        'password' => 'password',
+        'port' => 6379
+      }
 
     )
     expect(global_properties_loader).to receive(:load_properties).and_return(
 
-        'redis' => {
-          'password' => 'secure-password',
-          'slaves' => ['203.0.113.3', '203.0.113.4']
-        },
-        'network' => 'redis1'
+      'redis' => {
+        'password' => 'secure-password',
+        'slaves' => ['203.0.113.3', '203.0.113.4']
+      },
+      'network' => 'redis1'
 
     )
     expect(job_properties_loader).to receive(:load_properties).and_return(
 
-        'redis' => {
-          'master' => '203.0.113.2'
-        }
+      'redis' => {
+        'master' => '203.0.113.2'
+      }
 
     )
 
-    properties = subject.calculate_effective_properties(manifest_job_name: 'redis_z1')
+    properties = subject.calculate_effective_properties(
+      manifest_job_name: 'redis_z1')
     expect(properties).to eq(
       'redis' => {
         'password' => 'secure-password',

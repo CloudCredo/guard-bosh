@@ -23,7 +23,7 @@ describe Guard::Bosh::TemplateRenderer do
 
   let(:backtrace) do
     [
-      "gems/bosh-template-0.0000.0/lib/bosh/template/evaluation_context.rb:00:in `p'",
+      "gems/bosh-template-0/lib/bosh/template/evaluation_context.rb:00:in `p'",
       "(erb):3:in `get_binding'",
       "rubies/ruby-0.0.0/lib/ruby/0.0.0/erb.rb:000:in `eval'"
     ]
@@ -50,8 +50,13 @@ describe Guard::Bosh::TemplateRenderer do
   context 'when the template calls a misnamed helper method' do
     it 'reports the missing helper method' do
       expect(bosh_renderer).to receive(:render).with('config.erb').and_raise(
-        with_backtrace(NoMethodError.new(
-          "undefined method `o' for #<Bosh::Template::EvaluationContext:0x00000000000000>")))
+        with_backtrace(
+          NoMethodError.new(
+            "undefined method `o' for "\
+            '#<Bosh::Template::EvaluationContext:0x00000000000000>'
+          )
+        )
+      )
       result = subject.render(context: {}, template: 'config.erb')
       expect(result).to eq(
         template: 'config.erb',
@@ -65,8 +70,13 @@ describe Guard::Bosh::TemplateRenderer do
   context 'when the template references a missing name' do
     it 'reports the missing name' do
       expect(bosh_renderer).to receive(:render).with('config.erb').and_raise(
-        with_backtrace(NameError.new(
-          "undefined local variable or method `missing' for #<Bosh::Template::EvaluationContext:0x00000000000000>")))
+        with_backtrace(
+          NameError.new(
+            "undefined local variable or method `missing' for "\
+            '#<Bosh::Template::EvaluationContext:0x00000000000000>'
+          )
+        )
+      )
       result = subject.render(context: {}, template: 'config.erb')
       expect(result).to eq(
         template: 'config.erb',
@@ -80,8 +90,13 @@ describe Guard::Bosh::TemplateRenderer do
   context 'when the template is not well-formed' do
     it 'reports the template error' do
       expect(bosh_renderer).to receive(:render).with('config.erb').and_raise(
-        with_backtrace(SyntaxError.new(
-          "(erb):7: syntax error, unexpected end-of-input, expecting keyword_end\n; _erbout.force_encoding(__ENCODING__)")))
+        with_backtrace(
+          SyntaxError.new(
+            '(erb):7: syntax error, unexpected end-of-input, '\
+            "expecting keyword_end\n; _erbout.force_encoding(__ENCODING__)"
+          )
+        )
+      )
       result = subject.render(context: {}, template: 'config.erb')
       expect(result).to eq(
         template: 'config.erb',
@@ -95,11 +110,13 @@ describe Guard::Bosh::TemplateRenderer do
   context 'when the backtrace does not include an (erb) line' do
     it 'reports the template error but without a line number' do
       error = NameError.new(
-        "undefined local variable or method `missing' for #<Bosh::Template::EvaluationContext:0x00000000000000>")
+        "undefined local variable or method `missing' for "\
+        '#<Bosh::Template::EvaluationContext:0x00000000000000>')
       error.set_backtrace([
-        "gems/bosh-template-0.0000.0/lib/bosh/template/evaluation_context.rb:00:in `p'"
+        "gems/bosh-template-0/lib/bosh/template/evaluation_context.rb:00:in `p'"
       ])
-      expect(bosh_renderer).to receive(:render).with('config.erb').and_raise(error)
+      expect(bosh_renderer).to receive(:render).with(
+        'config.erb').and_raise(error)
       result = subject.render(context: {}, template: 'config.erb')
       expect(result).to include(line: :unknown)
     end

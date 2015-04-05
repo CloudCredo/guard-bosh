@@ -100,10 +100,11 @@ describe Guard::Bosh do
       expect(job_repository).to receive(:find_by_template).with(
         'redis').and_return(%w(redis_leader_z1 redis_slave_z2))
 
-      expect(job_repository).to receive(:template_paths).with('redis').and_return([
-        'jobs/redis/templates/redis_ctl.sh.erb',
-        'jobs/redis/templates/redis.conf.erb'
-      ])
+      expect(job_repository).to receive(:template_paths).with(
+        'redis').and_return([
+          'jobs/redis/templates/redis_ctl.sh.erb',
+          'jobs/redis/templates/redis.conf.erb'
+        ])
     end
     context 'when there are no errors' do
       it 'checks the template for errors' do
@@ -137,20 +138,22 @@ describe Guard::Bosh do
     before do
       expect(job_repository).to receive(:job_templates).and_return(
         %w(postgresql redis))
-      expect(job_repository).to receive(:template_paths).with('postgresql').and_return([
-        'jobs/postgresql/templates/pg_hba.conf.erb'
-      ])
-      expect(job_repository).to receive(:template_paths).with('redis').and_return([
-        'jobs/redis/templates/redis_ctl.sh.erb',
-        'jobs/redis/templates/redis.conf.erb'
-      ])
+      expect(job_repository).to receive(:template_paths).with(
+        'postgresql').and_return([
+          'jobs/postgresql/templates/pg_hba.conf.erb'
+        ])
+      expect(job_repository).to receive(:template_paths).with(
+        'redis').and_return([
+          'jobs/redis/templates/redis_ctl.sh.erb',
+          'jobs/redis/templates/redis.conf.erb'
+        ])
       expect(template_checker).to receive(:check).with(
         manifest_job_name: 'redis_slave_z2',
         job_name: 'redis',
         template: 'jobs/redis/templates/redis.conf.erb'
       ).and_return([])
       expect(job_repository).to receive(:find_by_template).with(
-      'redis').and_return(%w(redis_leader_z1 redis_slave_z2))
+        'redis').and_return(%w(redis_leader_z1 redis_slave_z2))
       expect(job_repository).to receive(:find_by_template).with(
         'postgresql').and_return(['postgresql_z1'])
       expect(template_checker).to receive(:check).with(

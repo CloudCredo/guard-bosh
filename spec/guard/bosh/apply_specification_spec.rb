@@ -46,7 +46,8 @@ describe Guard::Bosh::ApplySpecification do
   end
 
   before do
-    allow(package_resolver).to receive(:resolve).with('redis').and_return(['redis'])
+    allow(package_resolver).to receive(:resolve).with(
+      'redis').and_return(['redis'])
   end
 
   it 'includes the effective properties provided' do
@@ -94,7 +95,8 @@ describe Guard::Bosh::ApplySpecification do
         'blobstore_id' => '608c41bc-d491-4773-9812-8f24276eace1'
       }
     }
-    expect(package_resolver).to receive(:resolve).with('redis').and_return(['redis'])
+    expect(package_resolver).to receive(:resolve).with(
+      'redis').and_return(['redis'])
     apply_spec = subject.generate(properties: {}, job_name: 'redis_leader_z1')
     expect(apply_spec['packages']).to eq(expected_packages)
   end

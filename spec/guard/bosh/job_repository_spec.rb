@@ -34,18 +34,20 @@ describe Guard::Bosh::JobRepository do
   describe '#find_by_template' do
     context 'when there are multiple jobs that use a job template' do
       it 'returns all jobs that use that template' do
-        expect(subject.find_by_template('redis')).to eq(%w(redis_leader_z1 redis_slave_z2))
+        expect(subject.find_by_template('redis')).to eq(
+          %w(redis_leader_z1 redis_slave_z2))
       end
     end
   end
 
   describe '#template_paths' do
     it 'looks up the template paths from the job specification' do
-      expect(YAML).to receive(:load_file).with(Pathname.new('jobs/redis/spec')).and_return(
-        'templates' => {
-          'redis_ctl.sh.erb' => 'bin/redis_ctl.sh',
-          'redis.conf.erb' => 'config/redis.conf'
-        }
+      expect(YAML).to receive(:load_file).with(
+        Pathname.new('jobs/redis/spec')).and_return(
+          'templates' => {
+            'redis_ctl.sh.erb' => 'bin/redis_ctl.sh',
+            'redis.conf.erb' => 'config/redis.conf'
+          }
       )
       expect(subject.template_paths('redis')).to eq([
         Pathname.new('jobs/redis/templates/redis_ctl.sh.erb'),

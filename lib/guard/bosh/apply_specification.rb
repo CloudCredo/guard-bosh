@@ -46,12 +46,12 @@ module Guard
         all_packages.inject({}) do |result, package|
           result.merge(
 
-              package => {
-                'name' => package,
-                'version' => '1.0',
-                'sha1' => 'b945ce51b3635bb0ebfb2207323514381bcee824',
-                'blobstore_id' => '608c41bc-d491-4773-9812-8f24276eace1'
-              }
+            package => {
+              'name' => package,
+              'version' => '1.0',
+              'sha1' => 'b945ce51b3635bb0ebfb2207323514381bcee824',
+              'blobstore_id' => '608c41bc-d491-4773-9812-8f24276eace1'
+            }
 
           )
         end
@@ -86,7 +86,8 @@ module Guard
         end
         {
           job_network['name'] => {
-            'cloud_properties' => network_definition['subnets'].first['cloud_properties'],
+            'cloud_properties' => network_definition['subnets'].first[
+              'cloud_properties'],
             'dns_record_name' => dns_record_name(
               job_name, job_network['name'], @manifest['name']),
             'ip' => ip_address(job_network, network_definition),

@@ -38,7 +38,8 @@ describe Guard::Bosh::JobDefaultPropertiesLoader do
 
   it 'returns the properties that have defaults in the job spec' do
     expect(YAML).to receive(:load_file).with(
-      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(job_spec_excerpt)
+      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(
+        job_spec_excerpt)
     job_defaults = subject.load_properties(job_name: 'job-name')
     expect(job_defaults).to include(
       'redis' => {
@@ -54,14 +55,16 @@ describe Guard::Bosh::JobDefaultPropertiesLoader do
 
   it 'ignores properties that do not have defaults defined' do
     expect(YAML).to receive(:load_file).with(
-      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(job_spec_excerpt)
+      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(
+        job_spec_excerpt)
     job_defaults = subject.load_properties(job_name: 'job-name')
     expect(job_defaults['redis'].keys).not_to include('master')
   end
 
   it 'includes an empty hash for intermediate keys' do
     expect(YAML).to receive(:load_file).with(
-      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(job_spec_excerpt)
+      Pathname.new('/path/to/a/release/jobs/job-name/spec')).and_return(
+        job_spec_excerpt)
     job_defaults = subject.load_properties(job_name: 'job-name')
     expect(job_defaults['redis'].keys).to include('blazingly')
     expect(job_defaults['redis']['blazingly']).to be_empty

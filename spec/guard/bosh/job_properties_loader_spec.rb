@@ -7,7 +7,9 @@ describe Guard::Bosh::JobPropertiesLoader do
         {
           'instances' => 1,
           'name' => 'redis_leader_z1',
-          'networks' => [{ 'name' => 'redis1', 'static_ips' => ['10.244.2.6'] }],
+          'networks' => [
+            { 'name' => 'redis1', 'static_ips' => ['10.244.2.6'] }
+          ],
           'persistent_disk' => 0,
           'properties' => { 'network' => 'redis1', 'redis' => nil },
           'resource_pool' => 'small_z1',
@@ -16,9 +18,17 @@ describe Guard::Bosh::JobPropertiesLoader do
         {
           'instances' => 2,
           'name' => 'redis_z1',
-          'networks' => [{ 'name' => 'redis1', 'static_ips' => ['10.244.2.10', '10.244.2.14'] }],
+          'networks' => [
+            {
+              'name' => 'redis1',
+              'static_ips' => ['10.244.2.10', '10.244.2.14']
+            }
+          ],
           'persistent_disk' => 0,
-          'properties' => { 'network' => 'redis1', 'redis' => { 'master' => '10.244.2.6' } },
+          'properties' => {
+            'network' => 'redis1',
+            'redis' => { 'master' => '10.244.2.6' }
+          },
           'resource_pool' => 'small_z1',
           'templates' => [{ 'name' => 'redis', 'release' => 'redis' }],
           'update' => { 'canaries' => 10 }
