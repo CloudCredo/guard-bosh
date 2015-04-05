@@ -3,7 +3,7 @@ directories %w(jobs templates)
 
 manifest_path = 'path/to/manifest.yml'
 guard :bosh, deployment_manifest: manifest_path do
-  watch(%r{^jobs/.*})
+  watch(/^jobs\/.*/)
   watch(manifest_path)
 end
 
