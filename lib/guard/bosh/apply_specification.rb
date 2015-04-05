@@ -1,12 +1,12 @@
-require 'ipaddr'
-
 module Guard
   class Bosh
     # Simulated BOSH Apply Spec.
     class ApplySpecification
-      def initialize(deployment_manifest:, package_resolver:)
+      def initialize(
+        deployment_manifest:, package_resolver:, network_generator:)
         @manifest = deployment_manifest
         @package_resolver = package_resolver
+        @network_generator = network_generator
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -81,41 +81,8 @@ module Guard
       end
 
       def network(job_name)
-        manifest_job = manifest_job_with_name(job_name)
-        job_network = manifest_job['networks'].first
-        network_definition = @manifest['networks'].find do |n|
-          n['name'] == job_network['name']
-        end
-        {
-          job_network['name'] => {
-            'cloud_properties' => network_definition['subnets'].first[
-              'cloud_properties'],
-            'dns_record_name' => dns_record_name(
-              job_name, job_network['name'], @manifest['name']),
-            'ip' => ip_address(job_network, network_definition),
-            'netmask' => netmask(network_definition['subnets'].first['range']),
-            'default' => %w(dns gateway)
-          }
-        }
-      end
-
-      def ip_address(job_network, network_definition)
-        if job_network.key?('static_ips') &&
-           Array(job_network['static_ips']).any?
-          job_network['static_ips'].first
-        else
-          # We could be better here and calculate the dynamic address properly
-          network_definition['subnets'].first['range'].split('/').first
-        end
-      end
-
-      def dns_record_name(job, network, deployment)
-        "0.#{job}.#{network}.#{deployment}.bosh".gsub('_', '-')
-      end
-
-      def netmask(range)
-        cidr = range.split('/').last
-        IPAddr.new('255.255.255.255').mask(cidr).to_s
+        @network_generator.generate(
+          deployment_manifest: @manifest, job_name: job_name)
       end
 
       def resource_pool(job_name)

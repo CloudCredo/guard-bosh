@@ -1,3 +1,12 @@
+require 'guard/bosh/apply_specification'
+require 'guard/bosh/effective_properties_calculator'
+require 'guard/bosh/global_properties_loader'
+require 'guard/bosh/job_default_properties_loader'
+require 'guard/bosh/job_properties_loader'
+require 'guard/bosh/network_generator'
+require 'guard/bosh/package_resolver'
+require 'guard/bosh/template_renderer'
+
 module Guard
   class Bosh
     # Encapsulates building the apply spec, and rendering job templates against
@@ -45,6 +54,7 @@ module Guard
       def self.apply_specification(deployment_manifest, release_dir)
         ApplySpecification.new(
           deployment_manifest: deployment_manifest,
+          network_generator: NetworkGenerator.new,
           package_resolver: PackageResolver.new(release_dir)
         )
       end

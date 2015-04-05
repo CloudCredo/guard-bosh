@@ -1,11 +1,15 @@
 require 'guard/bosh/apply_specification'
+require 'guard/bosh/network_generator'
+require 'guard/bosh/package_resolver'
 
 describe Guard::Bosh::ApplySpecification do
-  let(:package_resolver) { double }
+  let(:package_resolver) { instance_double(Guard::Bosh::PackageResolver) }
+  let(:network_generator) { instance_double(Guard::Bosh::NetworkGenerator) }
   subject do
     Guard::Bosh::ApplySpecification.new(
       deployment_manifest: manifest_stub,
-      package_resolver: package_resolver
+      package_resolver: package_resolver,
+      network_generator: network_generator
     )
   end
 
@@ -15,26 +19,14 @@ describe Guard::Bosh::ApplySpecification do
       'jobs' => [{
         'instances' => 1,
         'name' => 'redis_leader_z1',
-        'networks' => [{ 'name' => 'redis1', 'static_ips' => ['203.0.113.2'] }],
         'persistent_disk' => 0,
         'resource_pool' => 'small_z1',
         'templates' => [{ 'name' => 'redis', 'release' => 'redis' }]
       }],
-      'networks' => [
-        {
-          'name' => 'redis1',
-          'subnets' =>  [{
-            'cloud_properties' => { 'name' => 'iaas_network_name' },
-            'range' => '203.0.113.2/24',
-            'static' => ['10.244.2.2']
-          }]
-        }
-      ],
       'resource_pools' => [
         {
           'cloud_properties' => { 'name' => 'random' },
           'name' => 'small_z1',
-          'network' => 'redis1',
           'size' => 3,
           'stemcell' => {
             'name' => 'bosh-warden-boshlite-ubuntu-trusty-go_agent',
@@ -48,6 +40,10 @@ describe Guard::Bosh::ApplySpecification do
   before do
     allow(package_resolver).to receive(:resolve).with(
       'redis').and_return(['redis'])
+    allow(network_generator).to receive(:generate).with(
+      deployment_manifest: manifest_stub,
+      job_name: 'redis_leader_z1'
+    )
   end
 
   it 'includes the effective properties provided' do
@@ -106,49 +102,14 @@ describe Guard::Bosh::ApplySpecification do
     expect(apply_spec['configuration_hash']).to_not be_empty
   end
 
-  context 'when the job has a static ip' do
-    it 'includes the network config' do
-      expected_networks = {
-        'redis1' =>  {
-          'cloud_properties' => { 'name' => 'iaas_network_name' },
-          'dns_record_name' => '0.redis-leader-z1.redis1.redis-deployment.bosh',
-          'ip' => '203.0.113.2',
-          'netmask' => '255.255.255.0',
-          'default' => %w(dns gateway)
-        }
-      }
-      apply_spec = subject.generate(properties: {}, job_name: 'redis_leader_z1')
-      expect(apply_spec['networks']).to eq(expected_networks)
-    end
-  end
-
-  context 'when the job has a dynamic ip' do
-    let(:manifest_stub_without_static_ip) do
-      manifest_stub.tap do |stub|
-        stub['jobs'].first['networks'].first.delete('static_ips')
-      end
-    end
-
-    subject do
-      Guard::Bosh::ApplySpecification.new(
-        deployment_manifest: manifest_stub_without_static_ip,
-        package_resolver: package_resolver
-      )
-    end
-
-    it 'includes the network config' do
-      expected_networks = {
-        'redis1' =>  {
-          'cloud_properties' => { 'name' => 'iaas_network_name' },
-          'dns_record_name' => '0.redis-leader-z1.redis1.redis-deployment.bosh',
-          'ip' => '203.0.113.2',
-          'netmask' => '255.255.255.0',
-          'default' => %w(dns gateway)
-        }
-      }
-      apply_spec = subject.generate(properties: {}, job_name: 'redis_leader_z1')
-      expect(apply_spec['networks']).to eq(expected_networks)
-    end
+  it 'includes the network config' do
+    generated_networks = { 'redis1' => {} }
+    expect(network_generator).to receive(:generate).with(
+      deployment_manifest: manifest_stub,
+      job_name: 'redis_leader_z1'
+    ).and_return(generated_networks)
+    apply_spec = subject.generate(properties: {}, job_name: 'redis_leader_z1')
+    expect(apply_spec['networks']).to eq(generated_networks)
   end
 
   it 'includes the resource pool' do
