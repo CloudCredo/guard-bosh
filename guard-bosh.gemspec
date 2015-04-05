@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name                  = 'guard-bosh'
-  spec.version               = '0.2.0'
+  spec.version               = '0.3.0'
   spec.authors               = ['Andrew Crump']
   spec.email                 = ['andrew@cloudcredo.com']
   spec.summary               = 'Fast feedback when developing BOSH releases'
