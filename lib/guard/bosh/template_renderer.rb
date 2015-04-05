@@ -4,6 +4,7 @@ require 'bosh/template/unknown_property'
 
 module Guard
   class Bosh
+    # Render a template with the provided context and report any errors.
     class TemplateRenderer
       def render(context:, template:)
         renderer = ::Bosh::Template::Renderer.new(

@@ -2,6 +2,7 @@ require 'yaml'
 
 module Guard
   class Bosh
+    # The property defaults (if any) defined for a BOSH job in the job spec.
     class JobDefaultPropertiesLoader
       def initialize(release_dir:)
         @release_dir = release_dir

@@ -1,6 +1,7 @@
 require 'guard/compat/plugin'
 
 module Guard
+  # Guard BOSH Plugin
   class Bosh < Plugin
     require 'pathname'
 

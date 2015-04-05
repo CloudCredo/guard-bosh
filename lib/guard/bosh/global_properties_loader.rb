@@ -1,5 +1,7 @@
 module Guard
   class Bosh
+    # Properties defined at the top-level of the manifest. These may be shared
+    # by multiple BOSH jobs.
     class GlobalPropertiesLoader
       def initialize(deployment_manifest:)
         @deployment_manifest = deployment_manifest

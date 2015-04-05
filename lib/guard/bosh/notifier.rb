@@ -2,6 +2,7 @@ require 'guard/compat'
 
 module Guard
   class Bosh
+    # Report success or failure to the user
     class Notifier
       def notify(errors)
         if errors.empty?

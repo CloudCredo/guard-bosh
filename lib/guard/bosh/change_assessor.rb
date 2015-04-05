@@ -1,5 +1,7 @@
 module Guard
   class Bosh
+    # Determines the impact of a code change to enable a subset of files to be
+    # re-evaluated.
     class ChangeAssessor
       def initialize(deployment_manifest)
         @deployment_manifest = deployment_manifest

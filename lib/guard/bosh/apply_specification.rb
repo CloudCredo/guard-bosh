@@ -2,6 +2,7 @@ require 'ipaddr'
 
 module Guard
   class Bosh
+    # Simulated BOSH Apply Spec.
     class ApplySpecification
       def initialize(deployment_manifest:, package_resolver:)
         @manifest = deployment_manifest

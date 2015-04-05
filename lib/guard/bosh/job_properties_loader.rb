@@ -1,5 +1,6 @@
 module Guard
   class Bosh
+    # The properties defined in the manifest at the job level.
     class JobPropertiesLoader
       def initialize(deployment_manifest:)
         @manifest = deployment_manifest

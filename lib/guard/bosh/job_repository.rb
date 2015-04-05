@@ -2,6 +2,7 @@ require 'pathname'
 
 module Guard
   class Bosh
+    # Wraps access to manifest jobs and templates
     class JobRepository
       def initialize(deployment_manifest)
         @manifest = deployment_manifest

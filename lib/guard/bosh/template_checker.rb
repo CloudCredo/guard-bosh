@@ -1,5 +1,7 @@
 module Guard
   class Bosh
+    # Encapsulates building the apply spec, and rendering job templates against
+    # it to identify errors.
     class TemplateChecker
       def initialize(deployment_manifest:,
                      properties_calculator:,

@@ -1,5 +1,6 @@
 module Guard
   class Bosh
+    # Packages for a given BOSH job
     class PackageResolver
       def initialize(release_dir)
         @release_dir = release_dir
