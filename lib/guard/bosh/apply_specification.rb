@@ -9,6 +9,7 @@ module Guard
         @package_resolver = package_resolver
       end
 
+      # rubocop:disable Metrics/MethodLength
       def generate(properties:, job_name:)
         {
           'deployment' => @manifest['name'],

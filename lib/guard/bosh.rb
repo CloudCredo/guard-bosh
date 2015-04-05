@@ -41,6 +41,7 @@ module Guard
       notify_errors(errors)
     end
 
+    # rubocop:disable Metrics/MethodLength
     def run_on_modifications(paths)
       change_scope, job_name = @change_assessor.determine_scope(paths)
       errors = case change_scope

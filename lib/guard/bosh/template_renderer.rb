@@ -13,17 +13,24 @@ module Guard
         begin
           renderer.render(template)
           { template: template, status: :success, detail: '' }
-        rescue ::Bosh::Template::UnknownProperty => e
-          error(template, "missing property: #{e.name}", line(e))
-        rescue NoMethodError, NameError => e
-          error(template, remove_bosh_template(e.message), line(e))
-        rescue SyntaxError => e
-          context = find_erb_error(e.message)
-          error(template, context['message'], context['line'].to_i)
+        rescue StandardError, SyntaxError => e
+          generate_user_facing_error(template, e)
         end
       end
 
       private
+
+      def generate_user_facing_error(template, ex)
+        case ex
+        when ::Bosh::Template::UnknownProperty
+          error(template, "missing property: #{ex.name}", line(ex))
+        when NoMethodError, NameError
+          error(template, remove_bosh_template(ex.message), line(ex))
+        when SyntaxError
+          context = find_erb_error(ex.message)
+          error(template, context['message'], context['line'].to_i)
+        end
+      end
 
       def error(template, message, line)
         {

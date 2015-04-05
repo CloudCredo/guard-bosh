@@ -11,11 +11,7 @@ module Guard
         paths = raw_paths.map { |p| Pathname.new(p) }
         return :all if paths.include?(@deployment_manifest)
 
-        jobs = paths.select { |p| spec_path?(p) }.map do |p|
-          p.dirname.basename.to_s
-        end
-
-        spec_scope = scope(jobs, :all_templates_for_job)
+        spec_scope = scope(jobs_for_paths(paths), :all_templates_for_job)
         return spec_scope if spec_scope
 
         jobs = paths.select { |p| template_path?(p) }.map do |t|
@@ -28,6 +24,12 @@ module Guard
       end
 
       private
+
+      def jobs_for_paths(paths)
+        paths.select { |p| spec_path?(p) }.map do |p|
+          p.dirname.basename.to_s
+        end
+      end
 
       def spec_path?(path)
         path.basename.to_s == 'spec'

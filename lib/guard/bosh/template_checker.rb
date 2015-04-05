@@ -24,21 +24,28 @@ module Guard
       end
 
       def self.build(deployment_manifest:, release_dir:)
-        properties_calculator = EffectivePropertiesCalculator.new(loaders: [
+        new(
+          deployment_manifest: deployment_manifest,
+          properties_calculator:
+            properties_calculator(deployment_manifest, release_dir),
+          apply_specification:
+            apply_specification(deployment_manifest, release_dir),
+          template_renderer: TemplateRenderer.new
+        )
+      end
+
+      def self.properties_calculator(deployment_manifest, release_dir)
+        EffectivePropertiesCalculator.new(loaders: [
           JobDefaultPropertiesLoader.new(release_dir: release_dir),
           GlobalPropertiesLoader.new(deployment_manifest: deployment_manifest),
           JobPropertiesLoader.new(deployment_manifest: deployment_manifest)
         ])
-        apply_specification = ApplySpecification.new(
+      end
+
+      def self.apply_specification(deployment_manifest, release_dir)
+        ApplySpecification.new(
           deployment_manifest: deployment_manifest,
           package_resolver: PackageResolver.new(release_dir)
-        )
-        template_renderer = TemplateRenderer.new
-        new(
-          deployment_manifest: deployment_manifest,
-          properties_calculator: properties_calculator,
-          apply_specification: apply_specification,
-          template_renderer: template_renderer
         )
       end
     end
